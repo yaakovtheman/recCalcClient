@@ -1,0 +1,42 @@
+<div class="select-size">
+
+  <div>
+    <div class="row">
+      <h2>אנא בחר את המידות המבוקשות:</h2>
+      <span>
+    <input [(ngModel)]="bordL" class="basic-slide" type="number"  id="bHeight"
+           placeholder="אורך הפלטה"/><label for="bHeight"  required>אורך</label>
+  </span>
+      <span>
+    <input [(ngModel)]="bordW" class="basic-slide" type="number" id="bWidth" placeholder="רוחב הפלטה"/><label
+        for="bWidth">רוחב</label>
+  </span>
+    </div>
+
+    <div class="row">
+      <div *ngFor="let rec of recList; let i = index">
+        <span>
+          <input class="balloon" [(ngModel)]="recList[i].width" type="number"  id="w{{rec.id}}"
+                 placeholder="אורך"/><label for="w{{rec.id}}">אורך</label>
+        </span>
+              <span>
+          <input class="balloon" [(ngModel)]="recList[i].height" type="number" id="h{{rec.id}}" placeholder="רוחב"/><label for="h{{rec.id}}">רוחב</label>
+        </span>
+              <span>
+          <input class="balloon" [(ngModel)]="recList[i].amount" type="number" (blur)="addRow($event)" id="a{{rec.id}}" placeholder="כמות"/><label
+                for="a{{rec.id}}">כמות</label>
+        </span>
+              <span>{{ngForCallback(rec.id)}}</span>
+            </div>
+            <button (click)="onSubmit()">אישור</button>
+            <button (click)="onSort1()">סינון 1</button>
+      <button (click)="onSort2()">סינון 2</button>
+      <button (click)="onSort3()">סינון 3</button>
+      <button (click)="onSort4()">סינון 4</button>
+    </div>
+  </div>
+</div>
+<h3 [hidden]="blocksList.length ==0">כמות לוחות : {{blocksList.length}}</h3>
+<span *ngFor="let blocks of blocksList; let i = index" >
+<app-board-window #can  [blocks]="blocks" [boardH]="bordL" [boardW]="bordW" ></app-board-window>
+</span>
