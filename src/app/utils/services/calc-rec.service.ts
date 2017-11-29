@@ -68,8 +68,11 @@ export class CalcRecService {
       var n, node, block;
       for (n = 0; n < blocks.length; n++) {
         block = blocks[n];
-        if (node = this.findNode(this.root, block.w, block.h))
+        if (node = this.findNode(this.root, block.w, block.h)) {
           block.fit = this.splitNode(node, block.w, block.h);
+        // }else if (node = this.findNode(this.root, block.h, block.w)){
+        //   block.fit = this.splitNode(node, block.h, block.w);
+        }
       }
     }
 
@@ -112,13 +115,10 @@ export class CalcRecService {
       })
     }
 
-  spin(rect : SelectRec[],swich : boolean){
-    rect.forEach((rec)=>{
-      if(rec.height>rec.width && swich){
+  spin(rect : SelectRec[],mod : number){
+    rect.forEach((rec,index)=>{
+      if(index % mod == 0){
         [rec.height,rec.width] = [rec.width,rec.height];
-        swich = false;
-      }else {
-        swich = true;
       }
     })
   }
@@ -129,9 +129,9 @@ export class CalcRecService {
     }
 
   compare(a: Block,b: Block) {
-    if (a.h < b.h)
+    if (a.h*a.w < b.h*b.w)
       return 1;
-    if (a.h > b.h)
+    if (a.h*a.w  > b.h*b.w)
       return -1;
     return 0;
   }

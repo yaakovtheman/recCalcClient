@@ -23,6 +23,7 @@ export class BoardWindowComponent implements OnInit,AfterViewInit {
   @Input()root: Block;
   @Input()boardW: number;
   @Input()boardH: number;
+  @Input()amount?: number;
   constructor() {
 
   }
@@ -73,6 +74,15 @@ export class BoardWindowComponent implements OnInit,AfterViewInit {
       rect(x, y, w, h, color) {
         this.draw.fillStyle = color;
         this.draw.fillRect(x + 0.5, y + 0.5, w, h);
+        this.draw.fillStyle = "black";
+        if(w<40){
+          this.draw.font = "bold 7pt Courier";
+        }else {
+          this.draw.font = "bold 10pt Courier";
+        }
+
+        this.draw.fillText(w+"x"+h,x+4,y+15);
+        this.draw.stroke();
       }
 
       stroke(x, y, w, h) {
@@ -86,6 +96,12 @@ export class BoardWindowComponent implements OnInit,AfterViewInit {
           if (block.fit)
             this.rect(block.fit.x, block.fit.y, block.w, block.h, this.color(n));
         }
+        if(this.amount){
+          this.draw.font = "bold 52pt Courier";
+          this.draw.strokeText("x "+this.amount,20,70);
+        }
+
+
       }
 
       boundary(node) {
@@ -99,7 +115,7 @@ export class BoardWindowComponent implements OnInit,AfterViewInit {
 
     colors= {
 
-      pastel :         [ "#FFF7A5", "#FFA5E0", "#A5B3FF", "#BFFFA5", "#FFCBA5" ],
+      pastel :         [ "#cec67b", "#FFA5E0", "#A5B3FF", "#abe28f", "#FFCBA5" ],
       basic:         [ "silver", "gray", "red", "maroon", "yellow", "olive", "lime", "green", "aqua", "teal", "blue", "navy", "fuchsia", "purple" ],
       gray:           [ "#111", "#222", "#333", "#444", "#555", "#666", "#777", "#888", "#999", "#AAA", "#BBB", "#CCC", "#DDD", "#EEE" ],
       vintage:       [ "#EFD279", "#95CBE9", "#024769", "#AFD775", "#2C5700", "#DE9D7F", "#7F9DDE", "#00572C", "#75D7AF", "#694702", "#E9CB95", "#79D2EF" ],
@@ -108,7 +124,7 @@ export class BoardWindowComponent implements OnInit,AfterViewInit {
     };
 
     color(n : number){
-      var cols = this.colors.gray;
+      var cols = this.colors.pastel;
       return cols[n % cols.length];
     }
 

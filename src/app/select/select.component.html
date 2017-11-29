@@ -1,14 +1,14 @@
-<div class="select-size">
-
+<img class="logo" src="\assets\logo.png" >
+<div class="select-size" [hidden]="hideSelect">
   <div>
     <div class="row">
       <h2>אנא בחר את המידות המבוקשות:</h2>
       <span>
-    <input [(ngModel)]="bordL" class="basic-slide" type="number"  id="bHeight"
+    <input [(ngModel)]="bordW" class="basic-slide" type="number"  id="bHeight"
            placeholder="אורך הפלטה"/><label for="bHeight"  required>אורך</label>
   </span>
       <span>
-    <input [(ngModel)]="bordW" class="basic-slide" type="number" id="bWidth" placeholder="רוחב הפלטה"/><label
+    <input [(ngModel)]="bordL" class="basic-slide" type="number" id="bWidth" placeholder="רוחב הפלטה"/><label
         for="bWidth">רוחב</label>
   </span>
     </div>
@@ -16,11 +16,11 @@
     <div class="row">
       <div *ngFor="let rec of recList; let i = index">
         <span>
-          <input class="balloon" [(ngModel)]="recList[i].width" type="number"  id="w{{rec.id}}"
+          <input class="balloon" [ngClass]="{'error': rec.isError}" (blur)="maxW(rec.id)" [(ngModel)]="recList[i].width" type="number"  id="w{{rec.id}}"
                  placeholder="אורך"/><label for="w{{rec.id}}">אורך</label>
         </span>
               <span>
-          <input class="balloon" [(ngModel)]="recList[i].height" type="number" id="h{{rec.id}}" placeholder="רוחב"/><label for="h{{rec.id}}">רוחב</label>
+          <input class="balloon" [ngClass]="{'error': rec.isError }" (blur)="maxH(rec.id)" [(ngModel)]="recList[i].height" type="number" id="h{{rec.id}}" placeholder="רוחב"/><label for="h{{rec.id}}">רוחב</label>
         </span>
               <span>
           <input class="balloon" [(ngModel)]="recList[i].amount" type="number" (blur)="addRow($event)" id="a{{rec.id}}" placeholder="כמות"/><label
@@ -28,15 +28,42 @@
         </span>
               <span>{{ngForCallback(rec.id)}}</span>
             </div>
-            <button (click)="onSubmit()">אישור</button>
-            <button (click)="onSort1()">סינון 1</button>
-      <button (click)="onSort2()">סינון 2</button>
-      <button (click)="onSort3()">סינון 3</button>
-      <button (click)="onSort4()">סינון 4</button>
+            <button class="button" (click)="findAlgo()">אישור</button>
+             <button class="button" (click)="ngOnInit()">מחק</button>
+
     </div>
   </div>
 </div>
-<h3 [hidden]="blocksList.length ==0">כמות לוחות : {{blocksList.length}}</h3>
-<span *ngFor="let blocks of blocksList; let i = index" >
-<app-board-window #can  [blocks]="blocks" [boardH]="bordL" [boardW]="bordW" ></app-board-window>
+  <div [hidden]="!hideSelect" class="row">
+    <div class="order">
+      <h2>הזמנה</h2>
+      <table>
+        <tr>
+          <th>אורך</th>
+          <th>רוחב</th>
+          <th>כמות</th>
+        </tr>
+        <tr *ngFor="let rec of recList">
+          <td>{{rec.height}}</td>
+          <td>{{rec.width}}</td>
+          <td>{{rec.amount}}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="hidden-print">
+    <button class="button" (click)="nextAlgo()">הבא</button>
+    <button class="button" (click)="hideSelect = false">שנה</button>
+      <button class="button" id="fax"  (click)="print()"><span class="glyphicon glyphicon-print"></span></button>
+    </div>
+  </div>
+<div  [hidden]="boardsGui.length ==0">
+<h3>
+  <span>   סה"כ : {{boardsGui.length}} לוחות בגודל  {{bordW}}/{{bordL}}</span>
+</h3>
+<h4 class="hidden-print">
+    פריסה : {{algoPlace+1}} מתוך {{boardsList.size}}
+</h4>
+</div>
+<span *ngFor="let boards of boardsGui; let i = index" >
+<app-board-window #can [blocks]="boards.blocks" [boardH]="bordL" [boardW]="bordW" ></app-board-window>
 </span>

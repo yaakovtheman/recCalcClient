@@ -1,10 +1,65 @@
 .select-size{
   direction: rtl;
 }
+.logo{
+  position: relative;
+  float: right;
+  width: 100px;
+  z-index: 3;
+  margin: auto;
+}
+#fax{
+  padding-top: 0px;
+  height: 34px;
+}
 
 /*@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700,600,300,800);*/
 * {
   box-sizing: border-box;
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 25%;
+  margin: auto;
+  direction: rtl;
+  margin-bottom: 5px;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: right;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 25px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 4px #999;
+}
+
+.button:hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 3px #666;
+  transform: translateY(4px);
 }
 
 html,
@@ -17,7 +72,7 @@ body {
 }
 
 .row {
-  max-width: 800px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 20px 10px;
   background: #032429;
@@ -30,9 +85,7 @@ body {
   content: "";
   display: block;
   top: 0;
-  left: -5000px;
   height: 100%;
-  width: 15000px;
   z-index: -1;
   background: inherit;
 }
@@ -574,6 +627,10 @@ span:nth-child(3) .card-slide:active {
 .swing:active + label {
   animation: swing 1.4s 1 ease-in-out;
   transform: rotate(82deg);
+}
+.error{
+  color: red !important;
+  font-weight: bold !important;
 }
 
 .balloon {

@@ -3,6 +3,7 @@ export class SelectRec {
   width: number;
   height : number;
   amount : number;
+  isError? : boolean
 
   constructor(id: number) {
     this.id = id;

@@ -3,6 +3,7 @@ import {SelectRec} from "../utils/classes/select-rec";
 import {CalcRecService} from "../utils/services/calc-rec.service";
 import {Block} from "../utils/classes/block";
 import {BoardWindowComponent} from "../board-window/board-window.component";
+import {Board} from "../utils/classes/board";
 
 @Component({
   selector: 'app-select',
@@ -11,22 +12,31 @@ import {BoardWindowComponent} from "../board-window/board-window.component";
 })
 export class SelectComponent implements OnInit , AfterViewInit{
   @ViewChildren('can') child:QueryList<BoardWindowComponent>;
+  hideSelect : boolean = false;
   recList : SelectRec[] = [];
-  index : number = 0;
+  index : number;
   flag : number =0;
   myBlocks : Block[] = [];
-  blocksList : Block[][] =[];
-  bordL: number =244;
-  bordW: number =122;
+  boards : Board[] =[];
+  boardsList : Set<Board[]>;
+  boardsGui : Board[];
+  bordL: number =122;
+  bordW: number =244;
+  control: number = 0;
+  algoPlace : number;
 
   constructor(private calcRecService:CalcRecService) { }
 
   ngOnInit() {
+    this.boardsList  = new Set<Board[]>();
+    this.boardsGui = [];
+    this.index =0;
+    this.algoPlace = 0;
+    this.recList = [];
     this.recList.push(new SelectRec(this.index));
   }
 
   ngAfterViewInit(){
-    console.log("hi");
     document.getElementById('bHeight').focus();
   }
 
@@ -47,36 +57,71 @@ export class SelectComponent implements OnInit , AfterViewInit{
   onKey(event: any) { // without type info
     console.log(event.target.value);
   }
-  onSort1(){
-    this.calcRecService.heightFirst(this.recList);
-    this.onSubmit();
-  }
-  onSort2(){
-    this.calcRecService.lowFirst(this.recList);
-    this.onSubmit();
-  }
-  onSort3(){
-    this.calcRecService.spin(this.recList,true);
-    this.onSubmit();
-  }
-  onSort4(){
-    this.calcRecService.spin(this.recList,false);
-    this.onSubmit();
+
+
+
+  nextAlgo(){
+    if(this.boardsList.size == this.algoPlace+1){
+      this.algoPlace = 0;
+    }else {
+      this.algoPlace++;
+    }
+    this.boardsGui =   Array.from(this.boardsList)[this.algoPlace];
   }
 
-  onSubmit(){
-    this.blocksList = [];
+
+  onSubmit() : Board[]{
+    this.boards = [];
+    this.control = 0;
     this.myBlocks = this.calcRecService.convertRectToBlock(this.recList);
     this.calcRecService.sortBlocks(this.myBlocks);
-    this.findAndDrawBoards(this.myBlocks);
+    return this.findAndDrawBoards(this.myBlocks);
   }
-  findAndDrawBoards(userRec : Block[]){
-    // this.myBlocks = [new Block(200,150), new Block(190,40), new Block(90,20), new Block(90,20),
-    //   new Block(60,30), new Block(50,450), new Block(200,20), new Block(40,20)];
+
+  findAlgo(){
+    if(!this.recList[this.recList.length-1].amount)
+      this.recList.pop();
+    this.boardsList = new Set<Board[]>();
+    this.calcRecService.heightFirst(this.recList);
+    let obj = this.onSubmit();
+    if(obj)
+    this.boardsList.add(obj);
+    this.calcRecService.lowFirst(this.recList);
+     obj = this.onSubmit();
+    if(obj)
+    this.boardsList.add(obj);
+    for (let i=1; i<this.recList.length; i++) {
+      this.calcRecService.spin(this.recList,i+1);
+      obj = this.onSubmit();
+      if(obj)
+        this.boardsList.add(obj);
+    }
+    this.boardsGui =   Array.from(this.boardsList)[this.algoPlace];
+    this.hideSelect = true;
+  }
+  maxW(index)
+  {
+    if(this.recList[index].width > this.bordW){
+      this.recList[index].width = this.bordW;
+      this.recList[index].isError= true
+    }
+  }
+
+  maxH(index)
+  {
+    if(this.recList[index].height > this.bordL){
+      this.recList[index].height= this.bordL;
+      this.recList[index].isError= true;
+    }
+
+  }
+
+
+  findAndDrawBoards(userRec : Block[]): Board[]{
+    this.control ++;
     let fitTempList : Block[]=[];
     let notFitTempList : Block[] =[];
-
-    this.calcRecService.init(this.bordL,this.bordW);
+    this.calcRecService.init(this.bordW,this.bordL);
     this.calcRecService.fit(userRec);
     userRec.forEach((block, index)=>{
       if(block.fit){
@@ -85,14 +130,18 @@ export class SelectComponent implements OnInit , AfterViewInit{
         notFitTempList.push(block)
       }
     });
-    this.blocksList.push(fitTempList);
-    if(notFitTempList.length > 0){
-      console.log(notFitTempList.length+" Boards Not Fit");
+    this.boards.push(new Board(fitTempList));
+    if(notFitTempList.length > 0 && this.control < 500){
       this.findAndDrawBoards(notFitTempList);
+      if(this.control == 500){
+        return null;
+      }
     }
-    // this.child._results.forEach((comp)=>{
-    //   comp.run();
-    // })
+      return this.boards;
+  }
+
+  print(){
+    window.print();
   }
 
 }
